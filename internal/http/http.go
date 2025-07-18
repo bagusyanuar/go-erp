@@ -1,9 +1,13 @@
 package http
 
-import "fmt"
+import (
+	"fmt"
 
-func Start() {
-	app := NewRouter()
+	"go.uber.org/zap"
+)
+
+func Start(log *zap.Logger) {
+	app := NewRouter(log)
 	port := ":3000"
 
 	fmt.Println("Fiber server running on", port)

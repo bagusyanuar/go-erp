@@ -12,5 +12,5 @@ func main() {
 	defer logger.Sync()
 
 	config.NewJWTManager(viper)
-	http.Start()
+	http.Start(logger)
 }
