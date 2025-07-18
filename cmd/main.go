@@ -1,15 +1,16 @@
 package main
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"github.com/bagusyanuar/go-erp/internal/config"
+	"github.com/bagusyanuar/go-erp/internal/http"
+	"github.com/bagusyanuar/go-erp/internal/infra"
 )
 
 func main() {
-	app := fiber.New()
+	viper := config.NewViper()
+	logger := infra.InitLogger()
+	defer logger.Sync()
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
-
-	app.Listen(":3000")
+	config.NewJWTManager(viper)
+	http.Start()
 }
