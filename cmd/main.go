@@ -10,7 +10,8 @@ func main() {
 	viper := config.NewViper()
 	logger := infra.InitLogger()
 	defer logger.Sync()
-
+	database := config.NewDatabaseConnection(viper)
+	infra.InitDB(database)
 	config.NewJWTManager(viper)
 	http.Start(logger)
 }
