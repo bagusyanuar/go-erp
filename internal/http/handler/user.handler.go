@@ -2,15 +2,15 @@ package handler
 
 import (
 	"github.com/bagusyanuar/go-erp/internal/delivery/request"
-	"github.com/bagusyanuar/go-erp/internal/usecase"
+	"github.com/bagusyanuar/go-erp/internal/service"
 	"github.com/gofiber/fiber/v2"
 )
 
 type UserHandler struct {
-	UserService usecase.UserService
+	UserService service.UserService
 }
 
-func NewUserHandler(userService usecase.UserService) *UserHandler {
+func NewUserHandler(userService service.UserService) *UserHandler {
 	return &UserHandler{
 		UserService: userService,
 	}

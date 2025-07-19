@@ -6,14 +6,20 @@ import (
 
 	"github.com/bagusyanuar/go-erp/internal/delivery/request"
 	"github.com/bagusyanuar/go-erp/internal/domain/entity"
-	"github.com/bagusyanuar/go-erp/internal/usecase"
+	"github.com/bagusyanuar/go-erp/internal/domain/repository"
 	"github.com/bagusyanuar/go-erp/pkg/response"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type userServiceImpl struct {
-	UserRepository usecase.UserRepository
-}
+type (
+	UserService interface {
+		Create(ctx context.Context, request *request.UserRequest) response.ServiceResponse[any]
+	}
+
+	userServiceImpl struct {
+		UserRepository repository.UserRepository
+	}
+)
 
 // Create implements usecase.UserService.
 func (service *userServiceImpl) Create(ctx context.Context, request *request.UserRequest) response.ServiceResponse[any] {
@@ -47,7 +53,7 @@ func (service *userServiceImpl) Create(ctx context.Context, request *request.Use
 	return res
 }
 
-func NewUserService(userRepository usecase.UserRepository) usecase.UserService {
+func NewUserService(userRepository repository.UserRepository) UserService {
 	return &userServiceImpl{
 		UserRepository: userRepository,
 	}

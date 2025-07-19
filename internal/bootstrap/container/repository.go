@@ -3,11 +3,10 @@ package container
 import (
 	"github.com/bagusyanuar/go-erp/internal/bootstrap"
 	"github.com/bagusyanuar/go-erp/internal/domain/repository"
-	"github.com/bagusyanuar/go-erp/internal/usecase"
 )
 
 type RepositoryContainer struct {
-	User usecase.UserRepository
+	User repository.UserRepository
 }
 
 func InitRepository(cfg *bootstrap.AppConfig) *RepositoryContainer {
