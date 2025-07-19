@@ -3,11 +3,15 @@ package http
 import (
 	"fmt"
 
-	"go.uber.org/zap"
+	"github.com/bagusyanuar/go-erp/internal/bootstrap"
+	"github.com/bagusyanuar/go-erp/internal/bootstrap/container"
 )
 
-func Start(log *zap.Logger) {
-	app := NewRouter(log)
+func Start(cfg *bootstrap.AppConfig) {
+	repo := container.InitRepository(cfg)
+	svc := container.InitService(cfg, repo)
+	handler := container.InitHandler(cfg, svc)
+	app := NewRouter(cfg, handler)
 	port := ":3000"
 
 	fmt.Println("Fiber server running on", port)

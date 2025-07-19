@@ -1,17 +1,18 @@
 package main
 
 import (
-	"github.com/bagusyanuar/go-erp/internal/config"
+	"github.com/bagusyanuar/go-erp/internal/bootstrap"
 	"github.com/bagusyanuar/go-erp/internal/http"
-	"github.com/bagusyanuar/go-erp/internal/infra"
 )
 
 func main() {
-	viper := config.NewViper()
-	logger := infra.InitLogger()
-	defer logger.Sync()
-	database := config.NewDatabaseConnection(viper)
-	infra.InitDB(database)
-	config.NewJWTManager(viper)
-	http.Start(logger)
+	// viper := config.NewViper()
+	// logger := infra.InitLogger()
+	// defer logger.Sync()
+	// dbConfig := config.NewDatabaseConnection(viper)
+	// database := infra.InitDB(dbConfig)
+
+	// config.NewJWTManager(viper)
+	app := bootstrap.Init()
+	http.Start(app)
 }

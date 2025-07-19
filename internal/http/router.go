@@ -1,16 +1,14 @@
 package http
 
 import (
-	"github.com/bagusyanuar/go-erp/internal/http/handler"
+	"github.com/bagusyanuar/go-erp/internal/bootstrap"
+	"github.com/bagusyanuar/go-erp/internal/bootstrap/container"
 	"github.com/gofiber/fiber/v2"
-	"go.uber.org/zap"
 )
 
-func NewRouter(log *zap.Logger) *fiber.App {
+func NewRouter(cfg *bootstrap.AppConfig, handler *container.HandlerContainer) *fiber.App {
 	app := fiber.New()
-
-	homeHandler := handler.NewHomeHandler(log)
-
-	app.Get("/", homeHandler.Index)
+	app.Get("/", handler.Home.Index)
+	app.Get("/user", handler.User.Create)
 	return app
 }
