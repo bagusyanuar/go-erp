@@ -3,21 +3,21 @@ package app
 import (
 	"fmt"
 
+	"github.com/bagusyanuar/go-erp/internal/app/di"
 	"github.com/bagusyanuar/go-erp/internal/config"
-	"github.com/bagusyanuar/go-erp/internal/container"
 	"github.com/bagusyanuar/go-erp/internal/http"
 )
 
 type AppContainer struct {
-	Repository *container.RepositoryContainer
-	Service    *container.ServiceContainer
-	Handler    *container.HandlerContainer
+	Repository *di.RepositoryContainer
+	Service    *di.ServiceContainer
+	Handler    *di.HandlerContainer
 }
 
 func CreateContainer(cfg *config.AppConfig) *AppContainer {
-	repo := container.InitRepository(cfg)
-	service := container.InitService(cfg, repo)
-	handler := container.InitHandler(cfg, service)
+	repo := di.InitRepository(cfg)
+	service := di.InitService(cfg, repo)
+	handler := di.InitHandler(cfg, service)
 
 	return &AppContainer{
 		Repository: repo,

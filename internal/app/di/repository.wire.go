@@ -1,4 +1,4 @@
-package container
+package di
 
 import (
 	"github.com/bagusyanuar/go-erp/internal/config"
