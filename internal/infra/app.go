@@ -7,14 +7,11 @@ import (
 )
 
 func Load() *config.AppConfig {
-	//load viper configuration
 	viper := config.NewViper()
 
-	//load zap logger configuration
 	logger := InitLogger()
 	defer logger.Sync()
 
-	//load database configuration & start connection
 	dbConfig := config.NewDatabaseConnection(viper)
 	db := InitDB(dbConfig)
 

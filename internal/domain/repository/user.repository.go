@@ -18,7 +18,13 @@ type (
 	}
 )
 
-// Create implements usecase.UserRepository.
+func NewUserRepository(db *gorm.DB) UserRepository {
+	return &userRepositoryImpl{
+		DB: db,
+	}
+}
+
+// Create implements UserRepository.
 func (repository *userRepositoryImpl) Create(ctx context.Context, user *entity.User) response.ServiceResponse[any] {
 	res := response.ServiceResponse[any]{
 		Status: response.InternalServerError,
@@ -33,10 +39,4 @@ func (repository *userRepositoryImpl) Create(ctx context.Context, user *entity.U
 
 	res.Status = response.Created
 	return res
-}
-
-func NewUserRepository(db *gorm.DB) UserRepository {
-	return &userRepositoryImpl{
-		DB: db,
-	}
 }

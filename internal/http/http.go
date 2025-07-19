@@ -3,11 +3,11 @@ package http
 import (
 	"fmt"
 
-	"github.com/bagusyanuar/go-erp/internal/bootstrap"
-	"github.com/bagusyanuar/go-erp/internal/bootstrap/container"
+	"github.com/bagusyanuar/go-erp/internal/config"
+	"github.com/bagusyanuar/go-erp/internal/container"
 )
 
-func Start(cfg *bootstrap.AppConfig) {
+func Start(cfg *config.AppConfig) {
 	repo := container.InitRepository(cfg)
 	svc := container.InitService(cfg, repo)
 	handler := container.InitHandler(cfg, svc)
