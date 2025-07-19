@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/bagusyanuar/go-erp/internal/http"
-	"github.com/bagusyanuar/go-erp/internal/infra"
+	"github.com/bagusyanuar/go-erp/internal/app"
 )
 
 func main() {
-	app := infra.Load()
-	http.Start(app)
+	appConfig := app.Load()
+	container := app.CreateContainer(appConfig)
+	app.Start(appConfig, container)
 }

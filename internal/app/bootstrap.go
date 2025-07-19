@@ -1,19 +1,20 @@
-package infra
+package app
 
 import (
 	"log"
 
 	"github.com/bagusyanuar/go-erp/internal/config"
+	"github.com/bagusyanuar/go-erp/internal/infra"
 )
 
 func Load() *config.AppConfig {
 	viper := config.NewViper()
 
-	logger := InitLogger()
+	logger := infra.InitLogger()
 	defer logger.Sync()
 
 	dbConfig := config.NewDatabaseConnection(viper)
-	db := InitDB(dbConfig)
+	db := infra.InitDB(dbConfig)
 
 	sqlDB, err := db.DB()
 	if err != nil {
