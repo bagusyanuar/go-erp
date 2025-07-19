@@ -1,3 +1,5 @@
 .env
 .vscode
 .logs
+migrate-up.ps1
+migrate-down.ps1
