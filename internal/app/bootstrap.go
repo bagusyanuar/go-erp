@@ -1,8 +1,6 @@
 package app
 
 import (
-	"log"
-
 	"github.com/bagusyanuar/go-erp/internal/config"
 	"github.com/bagusyanuar/go-erp/internal/infra"
 )
@@ -16,12 +14,12 @@ func Load() *config.AppConfig {
 	dbConfig := config.NewDatabaseConnection(viper)
 	db := infra.InitDB(dbConfig)
 
-	sqlDB, err := db.DB()
-	if err != nil {
-		log.Fatalf("failed to get database instance: %v", err)
-	}
+	// sqlDB, err := db.DB()
+	// if err != nil {
+	// 	log.Fatalf("failed to get database instance: %v", err)
+	// }
 
-	defer sqlDB.Close()
+	// defer sqlDB.Close()
 
 	return &config.AppConfig{
 		Logger: logger,

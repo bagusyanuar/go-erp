@@ -2,18 +2,18 @@ package service
 
 import (
 	"context"
-	"errors"
 
 	"github.com/bagusyanuar/go-erp/internal/delivery/request"
+	"github.com/bagusyanuar/go-erp/internal/domain/dto"
 	"github.com/bagusyanuar/go-erp/internal/domain/entity"
 	"github.com/bagusyanuar/go-erp/internal/domain/repository"
-	"github.com/bagusyanuar/go-erp/pkg/response"
+	"github.com/bagusyanuar/go-erp/internal/pkg/myexception"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type (
 	UserService interface {
-		Create(ctx context.Context, request *request.UserRequest) response.ServiceResponse[any]
+		Create(ctx context.Context, request *request.UserRequest) dto.ServiceResponse[any]
 	}
 
 	userServiceImpl struct {
@@ -21,25 +21,31 @@ type (
 	}
 )
 
-// Create implements usecase.UserService.
-func (service *userServiceImpl) Create(ctx context.Context, request *request.UserRequest) response.ServiceResponse[any] {
-	res := response.ServiceResponse[any]{
-		Status: response.InternalServerError,
-		Error:  errors.New("unknown error"),
+func NewUserService(userRepository repository.UserRepository) UserService {
+	return &userServiceImpl{
+		UserRepository: userRepository,
+	}
+}
+
+// Create implements UserService.
+func (service *userServiceImpl) Create(ctx context.Context, request *request.UserRequest) dto.ServiceResponse[any] {
+	res := dto.ServiceResponse[any]{
+		Status: dto.InternalServerError,
+		Error:  myexception.ErrUnknown,
 	}
 
-	// email := request.Email
-	// username := request.Username
-	// password := request.Password
+	email := request.Email
+	username := request.Username
+	password := request.Password
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("administrator"), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		res.Error = err
 		return res
 	}
 	data := &entity.User{
-		Email:    "admin@gmail.com",
-		Username: "administrator",
+		Email:    email,
+		Username: username,
 		Password: string(hashedPassword),
 	}
 
@@ -48,13 +54,7 @@ func (service *userServiceImpl) Create(ctx context.Context, request *request.Use
 		return repositoryResponse
 	}
 
-	res.Status = response.Created
+	res.Status = dto.Created
 	res.Error = nil
 	return res
-}
-
-func NewUserService(userRepository repository.UserRepository) UserService {
-	return &userServiceImpl{
-		UserRepository: userRepository,
-	}
 }
