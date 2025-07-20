@@ -14,6 +14,7 @@ func Load() *config.AppConfig {
 	dbConfig := config.NewDatabaseConnection(viper)
 	db := infra.InitDB(dbConfig)
 
+	validator := config.NewValidator()
 	// sqlDB, err := db.DB()
 	// if err != nil {
 	// 	log.Fatalf("failed to get database instance: %v", err)
@@ -22,7 +23,8 @@ func Load() *config.AppConfig {
 	// defer sqlDB.Close()
 
 	return &config.AppConfig{
-		Logger: logger,
-		DB:     db,
+		Logger:    logger,
+		DB:        db,
+		Validator: validator,
 	}
 }

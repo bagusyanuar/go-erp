@@ -12,11 +12,13 @@ import (
 
 type UserHandler struct {
 	UserService service.UserService
+	Validator   *validator.Validate
 }
 
-func NewUserHandler(userService service.UserService) *UserHandler {
+func NewUserHandler(userService service.UserService, validator *validator.Validate) *UserHandler {
 	return &UserHandler{
 		UserService: userService,
+		Validator:   validator,
 	}
 }
 
@@ -30,9 +32,7 @@ func (c *UserHandler) Create(ctx *fiber.Ctx) error {
 		})
 	}
 
-	v := validator.New()
-
-	messages, err := helper.Validate(v, request)
+	messages, err := helper.Validate(c.Validator, request)
 	if err != nil {
 		return helper.MakeResponse(ctx, dto.APIResponse[any]{
 			Code:    dto.UnprocessableEntity,

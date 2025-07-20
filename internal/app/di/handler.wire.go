@@ -13,6 +13,6 @@ type HandlerContainer struct {
 func InitHandler(cfg *config.AppConfig, serviceContainer *ServiceContainer) *HandlerContainer {
 	return &HandlerContainer{
 		Home: handler.NewHomeHandler(cfg.Logger),
-		User: handler.NewUserHandler(serviceContainer.User),
+		User: handler.NewUserHandler(serviceContainer.User, cfg.Validator),
 	}
 }
