@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 
@@ -24,7 +25,11 @@ func Validate(v *validator.Validate, request any) (messages map[string][]string,
 			field := e.Field()
 			f, _ := reflect.TypeOf(request).Elem().FieldByName(field)
 			jsonName, _ := f.Tag.Lookup("json")
+
 			translated := strings.ToLower(e.Translate(trans))
+			if e.Tag() == "symbol" {
+				translated = strings.ToLower(fmt.Sprintf("%s setidaknya mengandung satu simbol", field))
+			}
 			tmpMap[jsonName] = append(tmpMap[jsonName], translated)
 		}
 		messages = tmpMap
