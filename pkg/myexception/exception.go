@@ -3,7 +3,7 @@ package myexception
 import "errors"
 
 var (
-	ErrBadRequest          = errors.New("invalid bad request")
+	ErrBadRequest          = errors.New("bad request")
 	ErrUnauthorized        = errors.New("unauthorized")
 	ErrInvalidBearer       = errors.New("invalid bearer type")
 	ErrInvalidJWTParse     = errors.New("invalid jwt parse")

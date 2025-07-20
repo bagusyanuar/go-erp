@@ -4,16 +4,15 @@ import (
 	"context"
 
 	"github.com/bagusyanuar/go-erp/internal/delivery/request"
-	"github.com/bagusyanuar/go-erp/internal/domain/dto"
 	"github.com/bagusyanuar/go-erp/internal/domain/entity"
 	"github.com/bagusyanuar/go-erp/internal/domain/repository"
-	"github.com/bagusyanuar/go-erp/internal/pkg/myexception"
+	"github.com/bagusyanuar/go-erp/pkg/lib"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type (
 	UserService interface {
-		Create(ctx context.Context, request *request.UserRequest) dto.ServiceResponse[any]
+		Create(ctx context.Context, request *request.UserRequest) lib.ServiceResponse[any]
 	}
 
 	userServiceImpl struct {
@@ -28,11 +27,7 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 }
 
 // Create implements UserService.
-func (service *userServiceImpl) Create(ctx context.Context, request *request.UserRequest) dto.ServiceResponse[any] {
-	res := dto.ServiceResponse[any]{
-		Status: dto.InternalServerError,
-		Error:  myexception.ErrUnknown,
-	}
+func (service *userServiceImpl) Create(ctx context.Context, request *request.UserRequest) lib.ServiceResponse[any] {
 
 	email := request.Email
 	username := request.Username
@@ -40,8 +35,10 @@ func (service *userServiceImpl) Create(ctx context.Context, request *request.Use
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		res.Error = err
-		return res
+		return lib.ServiceInternalServerError[any](lib.ServiceResponseOptions[any]{
+			Error:   err,
+			Message: err.Error(),
+		})
 	}
 	data := &entity.User{
 		Email:    email,
@@ -51,10 +48,12 @@ func (service *userServiceImpl) Create(ctx context.Context, request *request.Use
 
 	repositoryResponse := service.UserRepository.Create(ctx, data)
 	if repositoryResponse.Error != nil {
-		return repositoryResponse
+		return lib.ServiceInternalServerError[any](lib.ServiceResponseOptions[any]{
+			Error:   repositoryResponse.Error,
+			Message: repositoryResponse.Message,
+		})
 	}
-
-	res.Status = dto.Created
-	res.Error = nil
-	return res
+	return lib.ServiceCreated(lib.ServiceResponseOptions[any]{
+		Message: "successfully create user",
+	})
 }

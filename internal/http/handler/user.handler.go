@@ -2,10 +2,9 @@ package handler
 
 import (
 	"github.com/bagusyanuar/go-erp/internal/delivery/request"
-	"github.com/bagusyanuar/go-erp/internal/domain/dto"
-	"github.com/bagusyanuar/go-erp/internal/pkg/helper"
-	"github.com/bagusyanuar/go-erp/internal/pkg/myexception"
 	"github.com/bagusyanuar/go-erp/internal/service"
+	"github.com/bagusyanuar/go-erp/pkg/lib"
+	"github.com/bagusyanuar/go-erp/pkg/myexception"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
@@ -26,21 +25,19 @@ func (c *UserHandler) Create(ctx *fiber.Ctx) error {
 	request := new(request.UserRequest)
 
 	if err := ctx.BodyParser(request); err != nil {
-		return helper.MakeResponse(ctx, dto.APIResponse[any]{
-			Code:    dto.BadRequest,
+		return lib.ResponseBadRequest(ctx, lib.ResponseOptions[any]{
 			Message: myexception.ErrBadRequest.Error(),
 		})
 	}
 
-	messages, err := helper.Validate(c.Validator, request)
+	messages, err := lib.Validate(c.Validator, request)
 	if err != nil {
-		return helper.MakeResponse(ctx, dto.APIResponse[any]{
-			Code:    dto.UnprocessableEntity,
-			Message: myexception.ErrUnprocessableEntity.Error(), // custom formatter,
+		return lib.ResponseUnproccesableEntity(ctx, lib.ResponseOptions[map[string][]string]{
+			Message: myexception.ErrUnprocessableEntity.Error(),
 			Data:    messages,
 		})
 	}
 
 	response := c.UserService.Create(ctx.UserContext(), request)
-	return helper.MakeResponse(ctx, dto.FromService(response, nil))
+	return lib.MakeResponse(ctx, lib.FromService(response, nil))
 }
