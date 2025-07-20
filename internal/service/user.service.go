@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/bagusyanuar/go-erp/internal/delivery/request"
+	"github.com/bagusyanuar/go-erp/internal/domain/dto"
 	"github.com/bagusyanuar/go-erp/internal/domain/entity"
 	"github.com/bagusyanuar/go-erp/internal/domain/repository"
 	"github.com/bagusyanuar/go-erp/pkg/lib"
@@ -12,6 +13,8 @@ import (
 
 type (
 	UserService interface {
+		FindAll(ctx context.Context) lib.ServiceResponse[[]dto.UserDTO]
+		FinByID(ctx context.Context, id string) lib.ServiceResponse[*dto.UserDTO]
 		Create(ctx context.Context, request *request.UserRequest) lib.ServiceResponse[any]
 	}
 
@@ -26,6 +29,36 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 	}
 }
 
+// FinByID implements UserService.
+func (service *userServiceImpl) FinByID(ctx context.Context, id string) lib.ServiceResponse[*dto.UserDTO] {
+	repositoryResponse := service.UserRepository.FindByID(ctx, id)
+	if repositoryResponse.Error != nil {
+		return lib.ServiceInternalServerError(lib.ServiceResponseOptions[*dto.UserDTO]{
+			Error:   repositoryResponse.Error,
+			Message: repositoryResponse.Message,
+		})
+	}
+	return lib.ServiceOK(lib.ServiceResponseOptions[*dto.UserDTO]{
+		Message: "successfully get user",
+		Data:    dto.ToUser(repositoryResponse.Data),
+	})
+}
+
+// FindAll implements UserService.
+func (service *userServiceImpl) FindAll(ctx context.Context) lib.ServiceResponse[[]dto.UserDTO] {
+	repositoryResponse := service.UserRepository.FindAll(ctx)
+	if repositoryResponse.Error != nil {
+		return lib.ServiceInternalServerError(lib.ServiceResponseOptions[[]dto.UserDTO]{
+			Error:   repositoryResponse.Error,
+			Message: repositoryResponse.Message,
+		})
+	}
+	return lib.ServiceOK(lib.ServiceResponseOptions[[]dto.UserDTO]{
+		Message: "successfully get users",
+		Data:    dto.ToUsers(repositoryResponse.Data),
+	})
+}
+
 // Create implements UserService.
 func (service *userServiceImpl) Create(ctx context.Context, request *request.UserRequest) lib.ServiceResponse[any] {
 
@@ -35,7 +68,7 @@ func (service *userServiceImpl) Create(ctx context.Context, request *request.Use
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return lib.ServiceInternalServerError[any](lib.ServiceResponseOptions[any]{
+		return lib.ServiceInternalServerError(lib.ServiceResponseOptions[any]{
 			Error:   err,
 			Message: err.Error(),
 		})
@@ -48,7 +81,7 @@ func (service *userServiceImpl) Create(ctx context.Context, request *request.Use
 
 	repositoryResponse := service.UserRepository.Create(ctx, data)
 	if repositoryResponse.Error != nil {
-		return lib.ServiceInternalServerError[any](lib.ServiceResponseOptions[any]{
+		return lib.ServiceInternalServerError(lib.ServiceResponseOptions[any]{
 			Error:   repositoryResponse.Error,
 			Message: repositoryResponse.Message,
 		})

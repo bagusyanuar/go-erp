@@ -138,6 +138,16 @@ func ServiceCreated[T any](opt ServiceResponseOptions[T]) ServiceResponse[T] {
 	}
 }
 
+func ServiceNotFound[T any](opt ServiceResponseOptions[T]) ServiceResponse[T] {
+	return ServiceResponse[T]{
+		Status:  NotFound,
+		Error:   opt.Error,
+		Message: opt.Message,
+		Data:    opt.Data,
+		Meta:    opt.Meta,
+	}
+}
+
 func ServiceInternalServerError[T any](opt ServiceResponseOptions[T]) ServiceResponse[T] {
 	return ServiceResponse[T]{
 		Status:  InternalServerError,

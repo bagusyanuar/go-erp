@@ -21,6 +21,17 @@ func NewUserHandler(userService service.UserService, validator *validator.Valida
 	}
 }
 
+func (c *UserHandler) FindAll(ctx *fiber.Ctx) error {
+	response := c.UserService.FindAll(ctx.UserContext())
+	return lib.MakeResponse(ctx, lib.FromService(response, nil))
+}
+
+func (c *UserHandler) FindByID(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+	response := c.UserService.FinByID(ctx.UserContext(), id)
+	return lib.MakeResponse(ctx, lib.FromService(response, nil))
+}
+
 func (c *UserHandler) Create(ctx *fiber.Ctx) error {
 	request := new(request.UserRequest)
 
