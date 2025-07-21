@@ -24,7 +24,6 @@ func NewUserHandler(userService service.UserService, cfg *config.AppConfig) *Use
 func (c *UserHandler) FindAll(ctx *fiber.Ctx) error {
 
 	queryParams := new(request.UserQuery)
-
 	if err := ctx.QueryParser(queryParams); err != nil {
 		return lib.ResponseBadRequest(ctx, lib.ResponseOptions[any]{
 			Message: myexception.ErrBadRequest.Error(),

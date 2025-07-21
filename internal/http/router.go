@@ -9,6 +9,7 @@ import (
 func NewRouter(cfg *config.AppConfig, handler *di.HandlerContainer) *fiber.App {
 	app := fiber.New()
 	app.Get("/", handler.Home.Index)
+	app.Post("/auth", handler.Auth.Login)
 	app.Get("/user", handler.User.FindAll)
 	app.Post("/user", handler.User.Create)
 	app.Get("/user/:id", handler.User.FindByID)

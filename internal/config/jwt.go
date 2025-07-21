@@ -6,9 +6,11 @@ import (
 )
 
 type JWTConfig struct {
-	Issuer     string
-	Secret     string
-	Expiration uint
+	Issuer           string
+	Secret           string
+	Expiration       uint
+	SecretRefresh    string
+	ExpirationRefreh uint
 }
 
 type JWTClaims struct {
@@ -21,10 +23,14 @@ func NewJWTManager(viper *viper.Viper) *JWTConfig {
 	issuer := viper.GetString("JWT_ISSUER")
 	secret := viper.GetString("JWT_SECRET")
 	exp := viper.GetUint("JWT_EXPIRATION")
+	secretRefresh := viper.GetString("JWT_SECRET_REFRESH")
+	expRefresh := viper.GetUint("JWT_EXPIRATION_REFRESH")
 
 	return &JWTConfig{
-		Issuer:     issuer,
-		Secret:     secret,
-		Expiration: exp,
+		Issuer:           issuer,
+		Secret:           secret,
+		Expiration:       exp,
+		SecretRefresh:    secretRefresh,
+		ExpirationRefreh: expRefresh,
 	}
 }
