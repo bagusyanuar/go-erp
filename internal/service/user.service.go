@@ -13,9 +13,9 @@ import (
 
 type (
 	UserService interface {
-		FindAll(ctx context.Context) lib.ServiceResponse[[]dto.UserDTO]
+		FindAll(ctx context.Context, queryParams *request.UserQuery) lib.ServiceResponse[[]dto.UserDTO]
 		FinByID(ctx context.Context, id string) lib.ServiceResponse[*dto.UserDTO]
-		Create(ctx context.Context, request *request.UserRequest) lib.ServiceResponse[any]
+		Create(ctx context.Context, request *request.UserSchema) lib.ServiceResponse[any]
 	}
 
 	userServiceImpl struct {
@@ -45,7 +45,7 @@ func (service *userServiceImpl) FinByID(ctx context.Context, id string) lib.Serv
 }
 
 // FindAll implements UserService.
-func (service *userServiceImpl) FindAll(ctx context.Context) lib.ServiceResponse[[]dto.UserDTO] {
+func (service *userServiceImpl) FindAll(ctx context.Context, queryParams *request.UserQuery) lib.ServiceResponse[[]dto.UserDTO] {
 	repositoryResponse := service.UserRepository.FindAll(ctx)
 	if repositoryResponse.Error != nil {
 		return lib.ServiceInternalServerError(lib.ServiceResponseOptions[[]dto.UserDTO]{
@@ -60,7 +60,7 @@ func (service *userServiceImpl) FindAll(ctx context.Context) lib.ServiceResponse
 }
 
 // Create implements UserService.
-func (service *userServiceImpl) Create(ctx context.Context, request *request.UserRequest) lib.ServiceResponse[any] {
+func (service *userServiceImpl) Create(ctx context.Context, request *request.UserSchema) lib.ServiceResponse[any] {
 
 	email := request.Email
 	username := request.Username

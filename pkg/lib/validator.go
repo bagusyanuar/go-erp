@@ -1,36 +1,28 @@
 package lib
 
 import (
-	"fmt"
-	"reflect"
 	"strings"
 
-	"github.com/go-playground/locales/id"
-	ut "github.com/go-playground/universal-translator"
+	"github.com/bagusyanuar/go-erp/internal/config"
 	"github.com/go-playground/validator/v10"
-	translate_id "github.com/go-playground/validator/v10/translations/id"
 )
 
 func Validate(v *validator.Validate, request any) (messages map[string][]string, err error) {
 	err = v.Struct(request)
 	if err != nil {
-		localeID := id.New()
-		uni := ut.New(localeID, localeID)
-		trans, _ := uni.GetTranslator("id")
-		translate_id.RegisterDefaultTranslations(v, trans)
-
+		trans := config.GetTranslator()
 		tmpMap := make(map[string][]string)
 
 		for _, e := range err.(validator.ValidationErrors) {
 			field := e.Field()
-			f, _ := reflect.TypeOf(request).Elem().FieldByName(field)
-			jsonName, _ := f.Tag.Lookup("json")
+
+			// using default field name
+			// f, _ := reflect.TypeOf(request).Elem().FieldByName(field)
+			// jsonName, _ := f.Tag.Lookup("json")
+			// tmpMap[jsonName] = append(tmpMap[jsonName], translated)
 
 			translated := strings.ToLower(e.Translate(trans))
-			if e.Tag() == "symbol" {
-				translated = strings.ToLower(fmt.Sprintf("%s setidaknya mengandung satu simbol", field))
-			}
-			tmpMap[jsonName] = append(tmpMap[jsonName], translated)
+			tmpMap[field] = append(tmpMap[field], translated)
 		}
 		messages = tmpMap
 	}

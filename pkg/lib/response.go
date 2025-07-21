@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"github.com/bagusyanuar/go-erp/pkg/myexception"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -30,17 +31,28 @@ type ResponseOptions[T any] struct {
 	Meta    any
 }
 
-func FromService[T any](service ServiceResponse[T], meta any) APIResponse[T] {
+func FromService[T any](service ServiceResponse[T]) APIResponse[T] {
 	return APIResponse[T]{
 		Code:    service.Status,
 		Message: service.Message,
 		Data:    service.Data,
-		Meta:    meta,
+		Meta:    service.Meta,
 	}
 }
 
 func MakeResponse[T any](ctx *fiber.Ctx, response APIResponse[T]) error {
 	return ctx.Status(int(response.Code)).JSON(response)
+}
+
+func MakeResponseFromService[T any](ctx *fiber.Ctx, service ServiceResponse[T]) error {
+	response := FromService(service)
+	return ctx.Status(int(response.Code)).JSON(response)
+}
+func ResponseErrValidation(ctx *fiber.Ctx, messages map[string][]string) error {
+	return ResponseUnproccesableEntity(ctx, ResponseOptions[map[string][]string]{
+		Message: myexception.ErrUnprocessableEntity.Error(),
+		Data:    messages,
+	})
 }
 
 func ResponseOK[T any](ctx *fiber.Ctx, opts ResponseOptions[T]) error {
