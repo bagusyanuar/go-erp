@@ -10,18 +10,12 @@ import (
 
 func FeatureSeeder(db *gorm.DB) {
 	if !db.Migrator().HasTable("features") {
-		log.Println("⛔ Table users not found, seeding cancelled.")
+		log.Println("⛔ Table features not found, seeding cancelled.")
 		return
 	}
 
-	features := []string{
-		"dashboard",
-		"user",
-		"role",
-	}
-
 	err := db.Transaction(func(tx *gorm.DB) error {
-		for _, f := range features {
+		for _, f := range Features {
 			var feature entity.Feature
 			err := tx.Where("name = ?", f).First(&feature).Error
 
