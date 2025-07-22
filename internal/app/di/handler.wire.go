@@ -9,6 +9,7 @@ type HandlerContainer struct {
 	Home *handler.HomeHandler
 	Auth *handler.AuthHandler
 	User *handler.UserHandler
+	Unit *handler.UnitHandler
 }
 
 func InitHandler(cfg *config.AppConfig, serviceContainer *ServiceContainer) *HandlerContainer {
@@ -16,5 +17,6 @@ func InitHandler(cfg *config.AppConfig, serviceContainer *ServiceContainer) *Han
 		Home: handler.NewHomeHandler(cfg.Logger),
 		Auth: handler.NewAuthHandler(serviceContainer.Auth, cfg),
 		User: handler.NewUserHandler(serviceContainer.User, cfg),
+		Unit: handler.NewUnitHandler(serviceContainer.Unit, cfg),
 	}
 }
