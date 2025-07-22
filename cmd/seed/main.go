@@ -14,5 +14,5 @@ func main() {
 	sqlDB, _ := db.DB()
 	defer sqlDB.Close()
 
-	seed.UserSeeder(db)
+	seed.Seed(db)
 }
