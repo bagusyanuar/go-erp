@@ -17,12 +17,6 @@ func Load() *config.AppConfig {
 	validator := config.NewValidator()
 
 	jwtConfig := config.NewJWTManager(viper)
-	// sqlDB, err := db.DB()
-	// if err != nil {
-	// 	log.Fatalf("failed to get database instance: %v", err)
-	// }
-
-	// defer sqlDB.Close()
 
 	return &config.AppConfig{
 		Logger:    logger,

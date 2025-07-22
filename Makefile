@@ -44,6 +44,10 @@ migrate-drop:
 	@$(MIGRATE) -path $(MIGRATION_PATH) -database "$(DB_URL)" drop -f
 	@echo Successfully drop all table.
 
+seed:
+	go run cmd/seed/main.go
+	@echo Successfully seed
+
 help:
 	@echo "Available commands:"
 	@echo "  make migrate-up      # Run DB migrations"
