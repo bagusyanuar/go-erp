@@ -27,8 +27,11 @@ func CreateContainer(cfg *config.AppConfig) *AppContainer {
 }
 
 func Start(cfg *config.AppConfig, container *AppContainer) {
-	server := http.NewRouter(cfg, container.Handler)
-	port := ":3000"
+	http.NewRouter(cfg, container.Handler)
+	envPort := cfg.Viper.GetString("APP_PORT")
+	port := fmt.Sprintf(":%s", envPort)
+
+	server := cfg.App
 
 	fmt.Println("Fiber server running on", port)
 	if err := server.Listen(port); err != nil {

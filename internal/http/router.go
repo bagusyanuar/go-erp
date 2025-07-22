@@ -3,11 +3,10 @@ package http
 import (
 	"github.com/bagusyanuar/go-erp/internal/app/di"
 	"github.com/bagusyanuar/go-erp/internal/config"
-	"github.com/gofiber/fiber/v2"
 )
 
-func NewRouter(cfg *config.AppConfig, handler *di.HandlerContainer) *fiber.App {
-	app := fiber.New()
+func NewRouter(cfg *config.AppConfig, handler *di.HandlerContainer) {
+	app := cfg.App
 	app.Get("/", handler.Home.Index)
 	app.Post("/auth", handler.Auth.Login)
 	app.Get("/user", handler.User.FindAll)
@@ -17,5 +16,4 @@ func NewRouter(cfg *config.AppConfig, handler *di.HandlerContainer) *fiber.App {
 	app.Post("/unit", handler.Unit.Create)
 	app.Get("/unit", handler.Unit.FindAll)
 	app.Get("/unit/:id", handler.Unit.FindByID)
-	return app
 }

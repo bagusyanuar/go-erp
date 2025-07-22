@@ -18,10 +18,14 @@ func Load() *config.AppConfig {
 
 	jwtConfig := config.NewJWTManager(viper)
 
+	app := config.NewFiber(viper)
+
 	return &config.AppConfig{
+		App:       app,
 		Logger:    logger,
 		DB:        db,
 		Validator: validator,
 		JWT:       jwtConfig,
+		Viper:     viper,
 	}
 }
