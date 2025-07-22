@@ -16,7 +16,9 @@ type Role struct {
 }
 
 func (r *Role) BeforeCreate(tx *gorm.DB) (err error) {
-	r.ID = uuid.New()
+	if r.ID == uuid.Nil {
+		r.ID = uuid.New()
+	}
 	r.CreatedAt = time.Now()
 	r.UpdatedAt = time.Now()
 	return

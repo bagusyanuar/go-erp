@@ -15,7 +15,9 @@ type Feature struct {
 }
 
 func (f *Feature) BeforeCreate(tx *gorm.DB) (err error) {
-	f.ID = uuid.New()
+	if f.ID == uuid.Nil {
+		f.ID = uuid.New()
+	}
 	f.CreatedAt = time.Now()
 	f.UpdatedAt = time.Now()
 	return
