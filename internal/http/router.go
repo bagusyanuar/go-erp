@@ -9,11 +9,14 @@ func NewRouter(cfg *config.AppConfig, handler *di.HandlerContainer) {
 	app := cfg.App
 	app.Get("/", handler.Home.Index)
 	app.Post("/login", handler.Auth.Login)
-	app.Get("/user", handler.User.FindAll)
-	app.Post("/user", handler.User.Create)
-	app.Get("/user/:id", handler.User.FindByID)
 
-	app.Post("/unit", handler.Unit.Create)
-	app.Get("/unit", handler.Unit.FindAll)
-	app.Get("/unit/:id", handler.Unit.FindByID)
+	user := app.Group("/user")
+	user.Get("/", handler.User.FindAll)
+	user.Post("/", handler.User.Create)
+	user.Get("/:id", handler.User.FindByID)
+
+	unit := app.Group("/unit")
+	unit.Post("/", handler.Unit.Create)
+	unit.Get("/", handler.Unit.FindAll)
+	unit.Get("/:id", handler.Unit.FindByID)
 }

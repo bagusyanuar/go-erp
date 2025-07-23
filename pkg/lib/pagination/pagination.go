@@ -30,3 +30,12 @@ func Paginate(db *gorm.DB, page, pageSize int) func(db *gorm.DB) *gorm.DB {
 func GetTotalPages(totalRows int64, pageSize int) int {
 	return int((totalRows + int64(pageSize) - 1) / int64(pageSize))
 }
+
+func MakeMetaPagination(page, pageSize int, totalRows int64) PaginationMeta {
+	return PaginationMeta{
+		Page:       page,
+		PageSize:   pageSize,
+		TotalRows:  totalRows,
+		TotalPages: GetTotalPages(totalRows, pageSize),
+	}
+}

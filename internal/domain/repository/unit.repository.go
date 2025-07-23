@@ -29,23 +29,6 @@ func NewUnitRepository(db *gorm.DB) UnitRepository {
 	}
 }
 
-// Create implements UnitRepository.
-func (repository *unitRepositoryImpl) Create(ctx context.Context, unit *entity.Unit) response.RepositoryResponse[any] {
-	tx := repository.DB.WithContext(ctx)
-	if err := tx.
-		Create(&unit).Error; err != nil {
-		return response.MakeRepositoryError[any](err)
-	}
-	return response.MakeRepositorySuccess[any](nil, nil)
-}
-
-func (repository *unitRepositoryImpl) defaultQuery(tx *gorm.DB, queryParams *request.UnitQuery) *gorm.DB {
-	param := fmt.Sprintf("%%%s%%", queryParams.Param)
-	tx = tx.Where("name ILIKE ?", param)
-
-	return tx
-}
-
 // FindAll implements UnitRepository.
 func (repository *unitRepositoryImpl) FindAll(ctx context.Context, queryParams *request.UnitQuery) response.RepositoryResponse[[]entity.Unit] {
 
@@ -65,12 +48,8 @@ func (repository *unitRepositoryImpl) FindAll(ctx context.Context, queryParams *
 		return response.MakeRepositoryError[[]entity.Unit](err)
 	}
 
-	meta := pagination.PaginationMeta{
-		Page:       queryParams.Page,
-		PageSize:   queryParams.PageSize,
-		TotalRows:  totalRows,
-		TotalPages: pagination.GetTotalPages(totalRows, queryParams.PageSize),
-	}
+	meta := pagination.MakeMetaPagination(queryParams.Page, queryParams.PageSize, totalRows)
+
 	return response.MakeRepositorySuccess(data, meta)
 }
 
@@ -83,4 +62,21 @@ func (repository *unitRepositoryImpl) FindByID(ctx context.Context, id string) r
 		return response.MakeRepositoryError[*entity.Unit](err)
 	}
 	return response.MakeRepositorySuccess(data, nil)
+}
+
+// Create implements UnitRepository.
+func (repository *unitRepositoryImpl) Create(ctx context.Context, unit *entity.Unit) response.RepositoryResponse[any] {
+	tx := repository.DB.WithContext(ctx)
+	if err := tx.
+		Create(&unit).Error; err != nil {
+		return response.MakeRepositoryError[any](err)
+	}
+	return response.MakeRepositorySuccess[any](nil, nil)
+}
+
+func (repository *unitRepositoryImpl) defaultQuery(tx *gorm.DB, queryParams *request.UnitQuery) *gorm.DB {
+	param := fmt.Sprintf("%%%s%%", queryParams.Param)
+	tx = tx.Where("name ILIKE ?", param)
+
+	return tx
 }

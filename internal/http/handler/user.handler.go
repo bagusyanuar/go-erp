@@ -6,6 +6,7 @@ import (
 	"github.com/bagusyanuar/go-erp/internal/service"
 	"github.com/bagusyanuar/go-erp/pkg/exception"
 	"github.com/bagusyanuar/go-erp/pkg/lib"
+	"github.com/bagusyanuar/go-erp/pkg/lib/response"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -22,43 +23,42 @@ func NewUserHandler(userService service.UserService, cfg *config.AppConfig) *Use
 }
 
 func (c *UserHandler) FindAll(ctx *fiber.Ctx) error {
-
 	queryParams := new(request.UserQuery)
 	if err := ctx.QueryParser(queryParams); err != nil {
-		return lib.ResponseBadRequest(ctx, lib.ResponseOptions[any]{
+		return response.MakeResponseBadRequest(ctx, response.APIResponseOptions[any]{
 			Message: exception.ErrBadRequest.Error(),
 		})
 	}
 
 	messages, err := lib.Validate(c.Config.Validator, queryParams)
 	if err != nil {
-		return lib.ResponseErrValidation(ctx, messages)
+		return response.MakeAPIResponseErrorValidation(ctx, messages)
 	}
 
-	response := c.UserService.FindAll(ctx.UserContext(), queryParams)
-	return lib.MakeResponse(ctx, lib.FromService(response))
+	res := c.UserService.FindAll(ctx.UserContext(), queryParams)
+	return response.MakeAPIResponseFromService(ctx, res)
 }
 
 func (c *UserHandler) FindByID(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
-	response := c.UserService.FinByID(ctx.UserContext(), id)
-	return lib.MakeResponse(ctx, lib.FromService(response))
+
+	res := c.UserService.FindByID(ctx.UserContext(), id)
+	return response.MakeAPIResponseFromService(ctx, res)
 }
 
 func (c *UserHandler) Create(ctx *fiber.Ctx) error {
 	request := new(request.UserSchema)
-
 	if err := ctx.BodyParser(request); err != nil {
-		return lib.ResponseBadRequest(ctx, lib.ResponseOptions[any]{
+		return response.MakeResponseBadRequest(ctx, response.APIResponseOptions[any]{
 			Message: exception.ErrBadRequest.Error(),
 		})
 	}
 
 	messages, err := lib.Validate(c.Config.Validator, request)
 	if err != nil {
-		return lib.ResponseErrValidation(ctx, messages)
+		return response.MakeAPIResponseErrorValidation(ctx, messages)
 	}
 
-	response := c.UserService.Create(ctx.UserContext(), request)
-	return lib.MakeResponseFromService(ctx, response)
+	res := c.UserService.Create(ctx.UserContext(), request)
+	return response.MakeAPIResponseFromService(ctx, res)
 }

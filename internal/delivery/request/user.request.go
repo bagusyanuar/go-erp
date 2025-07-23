@@ -7,6 +7,6 @@ type UserSchema struct {
 }
 
 type UserQuery struct {
-	Param string `json:"param" query:"param" validate:"required"`
+	Param string `json:"param" query:"param"`
 	QueryPagination
 }

@@ -41,6 +41,7 @@ func (c *UnitHandler) FindAll(ctx *fiber.Ctx) error {
 
 func (c *UnitHandler) FindByID(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
+
 	res := c.UnitService.FindByID(ctx.UserContext(), id)
 	return response.MakeAPIResponseFromService(ctx, res)
 }
