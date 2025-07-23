@@ -12,7 +12,7 @@ import (
 
 type (
 	UnitService interface {
-		FindAll(ctx context.Context, queryParams *request.UnitQuery) lib.ServiceResponse[[]dto.UnitDTO]
+		FindAll(ctx context.Context, queryParams *request.UnitQuery) lib.ServiceResponse[*[]dto.UnitDTO]
 		FindByID(ctx context.Context, id string) lib.ServiceResponse[*dto.UnitDTO]
 		Create(ctx context.Context, schema *request.UnitSchema) lib.ServiceResponse[any]
 	}
@@ -48,17 +48,18 @@ func (service *unitServiceImpl) Create(ctx context.Context, schema *request.Unit
 }
 
 // FindAll implements UnitService.
-func (service *unitServiceImpl) FindAll(ctx context.Context, queryParams *request.UnitQuery) lib.ServiceResponse[[]dto.UnitDTO] {
+func (service *unitServiceImpl) FindAll(ctx context.Context, queryParams *request.UnitQuery) lib.ServiceResponse[*[]dto.UnitDTO] {
 	repositoryResponse := service.UnitRepository.FindAll(ctx, queryParams)
 	if repositoryResponse.Error != nil {
-		return lib.ServiceInternalServerError(lib.ServiceResponseOptions[[]dto.UnitDTO]{
+		return lib.ServiceInternalServerError(lib.ServiceResponseOptions[*[]dto.UnitDTO]{
 			Error:   repositoryResponse.Error,
 			Message: repositoryResponse.Message,
 		})
 	}
-	return lib.ServiceOK(lib.ServiceResponseOptions[[]dto.UnitDTO]{
+	data := dto.ToUnits(repositoryResponse.Data)
+	return lib.ServiceOK(lib.ServiceResponseOptions[*[]dto.UnitDTO]{
 		Message: "successfully get units",
-		Data:    dto.ToUnits(repositoryResponse.Data),
+		Data:    &data,
 	})
 }
 

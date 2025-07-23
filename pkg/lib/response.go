@@ -18,6 +18,7 @@ const (
 	InternalServerError StatusCode = 500
 )
 
+//handler:response
 type APIResponse[T any] struct {
 	Code    StatusCode `json:"code"`
 	Message string     `json:"message"`

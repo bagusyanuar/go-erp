@@ -9,14 +9,14 @@ import (
 	"github.com/bagusyanuar/go-erp/internal/domain/dto"
 	"github.com/bagusyanuar/go-erp/internal/domain/entity"
 	"github.com/bagusyanuar/go-erp/internal/domain/repository"
-	"github.com/bagusyanuar/go-erp/pkg/lib"
+	"github.com/bagusyanuar/go-erp/pkg/lib/response"
 	"github.com/bagusyanuar/go-erp/pkg/myexception"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type (
 	AuthService interface {
-		Login(ctx context.Context, schema *request.LoginSchema) lib.ServiceResponse[*dto.LoginDTO]
+		Login(ctx context.Context, schema *request.LoginSchema) response.ServiceResponse[*dto.LoginDTO]
 	}
 
 	authServiceImpl struct {
@@ -33,11 +33,11 @@ func NewAuthService(authRepository repository.AuthRepository, cfg *config.AppCon
 }
 
 // Login implements AuthService.
-func (service *authServiceImpl) Login(ctx context.Context, schema *request.LoginSchema) lib.ServiceResponse[*dto.LoginDTO] {
+func (service *authServiceImpl) Login(ctx context.Context, schema *request.LoginSchema) response.ServiceResponse[*dto.LoginDTO] {
 	email := schema.Email
 	repositoryResponse := service.AuthRepository.Login(ctx, email)
 	if repositoryResponse.Error != nil {
-		return lib.ServiceInternalServerError(lib.ServiceResponseOptions[*dto.LoginDTO]{
+		return response.ServiceInternalServerError(response.ServiceResponseOptions[*dto.LoginDTO]{
 			Error:   repositoryResponse.Error,
 			Message: repositoryResponse.Message,
 		})
@@ -46,7 +46,7 @@ func (service *authServiceImpl) Login(ctx context.Context, schema *request.Login
 	user := repositoryResponse.Data
 	accessToken, err := service.createToken(user)
 	if err != nil {
-		return lib.ServiceInternalServerError(lib.ServiceResponseOptions[*dto.LoginDTO]{
+		return response.ServiceInternalServerError(response.ServiceResponseOptions[*dto.LoginDTO]{
 			Error:   myexception.ErrGenerateToken,
 			Message: myexception.ErrGenerateToken.Error(),
 		})
@@ -54,12 +54,12 @@ func (service *authServiceImpl) Login(ctx context.Context, schema *request.Login
 
 	refreshToken, err := service.createRefreshToken(user)
 	if err != nil {
-		return lib.ServiceInternalServerError(lib.ServiceResponseOptions[*dto.LoginDTO]{
+		return response.ServiceInternalServerError(response.ServiceResponseOptions[*dto.LoginDTO]{
 			Error:   myexception.ErrGenerateToken,
 			Message: myexception.ErrGenerateToken.Error(),
 		})
 	}
-	return lib.ServiceOK(lib.ServiceResponseOptions[*dto.LoginDTO]{
+	return response.ServiceOK(response.ServiceResponseOptions[*dto.LoginDTO]{
 		Message: "successfully login",
 		Data: &dto.LoginDTO{
 			AccessToken:  accessToken,

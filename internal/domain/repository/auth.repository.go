@@ -4,13 +4,13 @@ import (
 	"context"
 
 	"github.com/bagusyanuar/go-erp/internal/domain/entity"
-	"github.com/bagusyanuar/go-erp/pkg/lib"
+	"github.com/bagusyanuar/go-erp/pkg/lib/response"
 	"gorm.io/gorm"
 )
 
 type (
 	AuthRepository interface {
-		Login(ctx context.Context, email string) lib.RepositoryResponse[*entity.User]
+		Login(ctx context.Context, email string) response.RepositoryResponse[*entity.User]
 	}
 
 	authRepsitoryImpl struct {
@@ -25,12 +25,12 @@ func NewAuthRepository(db *gorm.DB) AuthRepository {
 }
 
 // Login implements AuthRepository.
-func (repository *authRepsitoryImpl) Login(ctx context.Context, email string) lib.RepositoryResponse[*entity.User] {
+func (repository *authRepsitoryImpl) Login(ctx context.Context, email string) response.RepositoryResponse[*entity.User] {
 	var data *entity.User
 	tx := repository.DB.WithContext(ctx)
 	if err := tx.Where("email = ?", email).
 		First(&data).Error; err != nil {
-		return lib.MakeRepositoryError[*entity.User](err)
+		return response.MakeRepositoryError[*entity.User](err)
 	}
-	return lib.MakeRepositorySuccess(data, nil)
+	return response.MakeRepositorySuccess(data, nil)
 }

@@ -13,7 +13,7 @@ import (
 
 type (
 	UserService interface {
-		FindAll(ctx context.Context, queryParams *request.UserQuery) lib.ServiceResponse[[]dto.UserDTO]
+		FindAll(ctx context.Context, queryParams *request.UserQuery) lib.ServiceResponse[*[]dto.UserDTO]
 		FinByID(ctx context.Context, id string) lib.ServiceResponse[*dto.UserDTO]
 		Create(ctx context.Context, request *request.UserSchema) lib.ServiceResponse[any]
 	}
@@ -45,17 +45,19 @@ func (service *userServiceImpl) FinByID(ctx context.Context, id string) lib.Serv
 }
 
 // FindAll implements UserService.
-func (service *userServiceImpl) FindAll(ctx context.Context, queryParams *request.UserQuery) lib.ServiceResponse[[]dto.UserDTO] {
+func (service *userServiceImpl) FindAll(ctx context.Context, queryParams *request.UserQuery) lib.ServiceResponse[*[]dto.UserDTO] {
 	repositoryResponse := service.UserRepository.FindAll(ctx)
 	if repositoryResponse.Error != nil {
-		return lib.ServiceInternalServerError(lib.ServiceResponseOptions[[]dto.UserDTO]{
+		return lib.ServiceInternalServerError(lib.ServiceResponseOptions[*[]dto.UserDTO]{
 			Error:   repositoryResponse.Error,
 			Message: repositoryResponse.Message,
 		})
 	}
-	return lib.ServiceOK(lib.ServiceResponseOptions[[]dto.UserDTO]{
+
+	data := dto.ToUsers(repositoryResponse.Data)
+	return lib.ServiceOK(lib.ServiceResponseOptions[*[]dto.UserDTO]{
 		Message: "successfully get users",
-		Data:    dto.ToUsers(repositoryResponse.Data),
+		Data:    &data,
 	})
 }
 
