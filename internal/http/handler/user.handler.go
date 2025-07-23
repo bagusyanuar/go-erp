@@ -4,8 +4,8 @@ import (
 	"github.com/bagusyanuar/go-erp/internal/config"
 	"github.com/bagusyanuar/go-erp/internal/delivery/request"
 	"github.com/bagusyanuar/go-erp/internal/service"
+	"github.com/bagusyanuar/go-erp/pkg/exception"
 	"github.com/bagusyanuar/go-erp/pkg/lib"
-	"github.com/bagusyanuar/go-erp/pkg/myexception"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -26,7 +26,7 @@ func (c *UserHandler) FindAll(ctx *fiber.Ctx) error {
 	queryParams := new(request.UserQuery)
 	if err := ctx.QueryParser(queryParams); err != nil {
 		return lib.ResponseBadRequest(ctx, lib.ResponseOptions[any]{
-			Message: myexception.ErrBadRequest.Error(),
+			Message: exception.ErrBadRequest.Error(),
 		})
 	}
 
@@ -50,7 +50,7 @@ func (c *UserHandler) Create(ctx *fiber.Ctx) error {
 
 	if err := ctx.BodyParser(request); err != nil {
 		return lib.ResponseBadRequest(ctx, lib.ResponseOptions[any]{
-			Message: myexception.ErrBadRequest.Error(),
+			Message: exception.ErrBadRequest.Error(),
 		})
 	}
 

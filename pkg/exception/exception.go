@@ -1,4 +1,4 @@
-package myexception
+package exception
 
 import "errors"
 

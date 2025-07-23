@@ -9,8 +9,8 @@ import (
 	"github.com/bagusyanuar/go-erp/internal/domain/dto"
 	"github.com/bagusyanuar/go-erp/internal/domain/entity"
 	"github.com/bagusyanuar/go-erp/internal/domain/repository"
+	"github.com/bagusyanuar/go-erp/pkg/exception"
 	"github.com/bagusyanuar/go-erp/pkg/lib/response"
-	"github.com/bagusyanuar/go-erp/pkg/myexception"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -47,16 +47,16 @@ func (service *authServiceImpl) Login(ctx context.Context, schema *request.Login
 	accessToken, err := service.createToken(user)
 	if err != nil {
 		return response.ServiceInternalServerError(response.ServiceResponseOptions[*dto.LoginDTO]{
-			Error:   myexception.ErrGenerateToken,
-			Message: myexception.ErrGenerateToken.Error(),
+			Error:   exception.ErrGenerateToken,
+			Message: exception.ErrGenerateToken.Error(),
 		})
 	}
 
 	refreshToken, err := service.createRefreshToken(user)
 	if err != nil {
 		return response.ServiceInternalServerError(response.ServiceResponseOptions[*dto.LoginDTO]{
-			Error:   myexception.ErrGenerateToken,
-			Message: myexception.ErrGenerateToken.Error(),
+			Error:   exception.ErrGenerateToken,
+			Message: exception.ErrGenerateToken.Error(),
 		})
 	}
 	return response.ServiceOK(response.ServiceResponseOptions[*dto.LoginDTO]{

@@ -1,6 +1,9 @@
 package response
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/bagusyanuar/go-erp/pkg/exception"
+	"github.com/gofiber/fiber/v2"
+)
 
 type (
 	APIResponse[T any] struct {
@@ -15,6 +18,13 @@ type (
 		Data    T
 		Meta    any
 	}
+
+	PaginationMeta struct {
+		Page       int   `json:"page"`
+		PageSize   int   `json:"page_size"`
+		TotalRows  int64 `json:"total_rows"`
+		TotalPages int   `json:"total_pages"`
+	}
 )
 
 func MakeAPIResponse[T any](ctx *fiber.Ctx, res APIResponse[T]) error {
@@ -24,6 +34,13 @@ func MakeAPIResponse[T any](ctx *fiber.Ctx, res APIResponse[T]) error {
 func MakeAPIResponseFromService[T any](ctx *fiber.Ctx, svcResponse ServiceResponse[T]) error {
 	res := createResponseFromService(svcResponse)
 	return ctx.Status(res.Code).JSON(res)
+}
+
+func MakeAPIResponseErrorValidation(ctx *fiber.Ctx, messages map[string][]string) error {
+	return MakeResponseUnprocessableEntity(ctx, APIResponseOptions[map[string][]string]{
+		Message: exception.ErrUnprocessableEntity.Error(),
+		Data:    messages,
+	})
 }
 
 func createResponseFromService[T any](res ServiceResponse[T]) APIResponse[T] {

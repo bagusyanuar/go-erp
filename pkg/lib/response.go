@@ -1,7 +1,7 @@
 package lib
 
 import (
-	"github.com/bagusyanuar/go-erp/pkg/myexception"
+	"github.com/bagusyanuar/go-erp/pkg/exception"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -51,7 +51,7 @@ func MakeResponseFromService[T any](ctx *fiber.Ctx, service ServiceResponse[T]) 
 }
 func ResponseErrValidation(ctx *fiber.Ctx, messages map[string][]string) error {
 	return ResponseUnproccesableEntity(ctx, ResponseOptions[map[string][]string]{
-		Message: myexception.ErrUnprocessableEntity.Error(),
+		Message: exception.ErrUnprocessableEntity.Error(),
 		Data:    messages,
 	})
 }

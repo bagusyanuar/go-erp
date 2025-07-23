@@ -4,8 +4,9 @@ import (
 	"github.com/bagusyanuar/go-erp/internal/config"
 	"github.com/bagusyanuar/go-erp/internal/delivery/request"
 	"github.com/bagusyanuar/go-erp/internal/service"
+	"github.com/bagusyanuar/go-erp/pkg/exception"
 	"github.com/bagusyanuar/go-erp/pkg/lib"
-	"github.com/bagusyanuar/go-erp/pkg/myexception"
+	"github.com/bagusyanuar/go-erp/pkg/lib/response"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -24,16 +25,16 @@ func NewAuthHandler(authService service.AuthService, cfg *config.AppConfig) *Aut
 func (c *AuthHandler) Login(ctx *fiber.Ctx) error {
 	request := new(request.LoginSchema)
 	if err := ctx.BodyParser(request); err != nil {
-		return lib.ResponseBadRequest(ctx, lib.ResponseOptions[any]{
-			Message: myexception.ErrBadRequest.Error(),
+		return response.MakeResponseBadRequest(ctx, response.APIResponseOptions[any]{
+			Message: exception.ErrBadRequest.Error(),
 		})
 	}
 
 	messages, err := lib.Validate(c.Config.Validator, request)
 	if err != nil {
-		return lib.ResponseErrValidation(ctx, messages)
+		return response.MakeAPIResponseErrorValidation(ctx, messages)
 	}
 
-	response := c.AuthService.Login(ctx.UserContext(), request)
-	return lib.MakeResponseFromService(ctx, response)
+	res := c.AuthService.Login(ctx.UserContext(), request)
+	return response.MakeAPIResponseFromService(ctx, res)
 }
