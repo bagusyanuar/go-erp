@@ -19,4 +19,9 @@ func NewRouter(cfg *config.AppConfig, handler *di.HandlerContainer) {
 	unit.Post("/", handler.Unit.Create)
 	unit.Get("/", handler.Unit.FindAll)
 	unit.Get("/:id", handler.Unit.FindByID)
+
+	materialCategory := app.Group("/material-category")
+	materialCategory.Post("/", handler.MaterialCategory.Create)
+	materialCategory.Get("/", handler.MaterialCategory.FindAll)
+	materialCategory.Get("/:id", handler.MaterialCategory.FindByID)
 }

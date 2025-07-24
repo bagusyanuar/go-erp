@@ -6,17 +6,19 @@ import (
 )
 
 type HandlerContainer struct {
-	Home *handler.HomeHandler
-	Auth *handler.AuthHandler
-	User *handler.UserHandler
-	Unit *handler.UnitHandler
+	Home             *handler.HomeHandler
+	Auth             *handler.AuthHandler
+	User             *handler.UserHandler
+	Unit             *handler.UnitHandler
+	MaterialCategory *handler.MaterialCategoryHandler
 }
 
 func InitHandler(cfg *config.AppConfig, serviceContainer *ServiceContainer) *HandlerContainer {
 	return &HandlerContainer{
-		Home: handler.NewHomeHandler(cfg.Logger),
-		Auth: handler.NewAuthHandler(serviceContainer.Auth, cfg),
-		User: handler.NewUserHandler(serviceContainer.User, cfg),
-		Unit: handler.NewUnitHandler(serviceContainer.Unit, cfg),
+		Home:             handler.NewHomeHandler(cfg.Logger),
+		Auth:             handler.NewAuthHandler(serviceContainer.Auth, cfg),
+		User:             handler.NewUserHandler(serviceContainer.User, cfg),
+		Unit:             handler.NewUnitHandler(serviceContainer.Unit, cfg),
+		MaterialCategory: handler.NewMaterialCategoryHandler(serviceContainer.MaterialCategory, cfg),
 	}
 }

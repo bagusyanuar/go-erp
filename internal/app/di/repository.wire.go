@@ -6,15 +6,17 @@ import (
 )
 
 type RepositoryContainer struct {
-	Auth repository.AuthRepository
-	User repository.UserRepository
-	Unit repository.UnitRepository
+	Auth             repository.AuthRepository
+	User             repository.UserRepository
+	Unit             repository.UnitRepository
+	MaterialCategory repository.MaterialCategoryRepository
 }
 
 func InitRepository(cfg *config.AppConfig) *RepositoryContainer {
 	return &RepositoryContainer{
-		Auth: repository.NewAuthRepository(cfg.DB),
-		User: repository.NewUserRepository(cfg.DB),
-		Unit: repository.NewUnitRepository(cfg.DB),
+		Auth:             repository.NewAuthRepository(cfg.DB),
+		User:             repository.NewUserRepository(cfg.DB),
+		Unit:             repository.NewUnitRepository(cfg.DB),
+		MaterialCategory: repository.NewMaterialCategoryRepository(cfg.DB),
 	}
 }
