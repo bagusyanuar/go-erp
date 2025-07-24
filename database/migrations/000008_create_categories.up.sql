@@ -1,8 +1,8 @@
 -- Enable UUID support
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- Create material_categories table
-CREATE TABLE material_categories (
+-- Create categories table
+CREATE TABLE categories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL UNIQUE,
     created_at TIMESTAMPTZ DEFAULT now(),
@@ -11,4 +11,4 @@ CREATE TABLE material_categories (
 );
 
 -- Index for soft deletes
-CREATE INDEX idx_material_categories_deleted_at ON material_categories(deleted_at);
+CREATE INDEX idx_categories_deleted_at ON categories(deleted_at);
