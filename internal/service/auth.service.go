@@ -75,6 +75,7 @@ func (service *authServiceImpl) createToken(user *entity.User) (string, error) {
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    service.Config.JWT.Issuer,
 			ExpiresAt: jwt.NewNumericDate(exp),
+			Subject:   user.ID.String(),
 		},
 		Email:    user.Email,
 		Username: user.Username,

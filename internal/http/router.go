@@ -32,4 +32,7 @@ func NewRouter(cfg *config.AppConfig, handler *di.HandlerContainer) {
 	material.Post("/", handler.Material.Create)
 	material.Get("/", handler.Material.FindAll)
 	material.Get("/:id", handler.Material.FindByID)
+
+	materialInventory := app.Group("/material-inventory", jwtMiddleware)
+	materialInventory.Post("/", handler.MaterialInventory.Create)
 }
