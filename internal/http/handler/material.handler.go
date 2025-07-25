@@ -10,20 +10,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type MaterialCategoryHandler struct {
-	MaterialCategoryService service.MaterialCategoryService
-	Config                  *config.AppConfig
+type MaterialHandler struct {
+	MaterialService service.MaterialService
+	Config          *config.AppConfig
 }
 
-func NewMaterialCategoryHandler(materialCategoryService service.MaterialCategoryService, cfg *config.AppConfig) *MaterialCategoryHandler {
-	return &MaterialCategoryHandler{
-		MaterialCategoryService: materialCategoryService,
-		Config:                  cfg,
+func NewMaterialHandler(materialService service.MaterialService, cfg *config.AppConfig) *MaterialHandler {
+	return &MaterialHandler{
+		MaterialService: materialService,
+		Config:          cfg,
 	}
 }
 
-func (c *MaterialCategoryHandler) FindAll(ctx *fiber.Ctx) error {
-	queryParams := new(request.MaterialCategoryQuery)
+func (c *MaterialHandler) FindAll(ctx *fiber.Ctx) error {
+	queryParams := new(request.MaterialQuery)
 	if err := ctx.QueryParser(queryParams); err != nil {
 		return response.MakeResponseBadRequest(ctx, response.APIResponseOptions[any]{
 			Message: exception.ErrBadRequest.Error(),
@@ -35,19 +35,19 @@ func (c *MaterialCategoryHandler) FindAll(ctx *fiber.Ctx) error {
 		return response.MakeAPIResponseErrorValidation(ctx, messages)
 	}
 
-	res := c.MaterialCategoryService.FindAll(ctx.UserContext(), queryParams)
+	res := c.MaterialService.FindAll(ctx.UserContext(), queryParams)
 	return response.MakeAPIResponseFromService(ctx, res)
 }
 
-func (c *MaterialCategoryHandler) FindByID(ctx *fiber.Ctx) error {
+func (c *MaterialHandler) FindByID(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 
-	res := c.MaterialCategoryService.FindByID(ctx.UserContext(), id)
+	res := c.MaterialService.FindByID(ctx.UserContext(), id)
 	return response.MakeAPIResponseFromService(ctx, res)
 }
 
-func (c *MaterialCategoryHandler) Create(ctx *fiber.Ctx) error {
-	request := new(request.MaterialCategorySchema)
+func (c *MaterialHandler) Create(ctx *fiber.Ctx) error {
+	request := new(request.MaterialSchema)
 	if err := ctx.BodyParser(request); err != nil {
 		return response.MakeResponseBadRequest(ctx, response.APIResponseOptions[any]{
 			Message: exception.ErrBadRequest.Error(),
@@ -59,6 +59,6 @@ func (c *MaterialCategoryHandler) Create(ctx *fiber.Ctx) error {
 		return response.MakeAPIResponseErrorValidation(ctx, messages)
 	}
 
-	res := c.MaterialCategoryService.Create(ctx.UserContext(), request)
+	res := c.MaterialService.Create(ctx.UserContext(), request)
 	return response.MakeAPIResponseFromService(ctx, res)
 }

@@ -1,10 +1,8 @@
 package request
 
-import "github.com/google/uuid"
-
 type MaterialSchema struct {
-	MaterialCategoryID uuid.UUID `json:"material_category_id" validate:"required,uuid4"`
-	Name               string    `json:"name" validate:"required"`
+	Name       string   `json:"name" validate:"required"`
+	Categories []string `json:"categories" validate:"required,dive,uuid4"`
 }
 
 type MaterialQuery struct {

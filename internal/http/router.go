@@ -28,8 +28,8 @@ func NewRouter(cfg *config.AppConfig, handler *di.HandlerContainer) {
 	category.Get("/", handler.Category.FindAll)
 	category.Get("/:id", handler.Category.FindByID)
 
-	materialCategory := app.Group("/material-category", jwtMiddleware)
-	materialCategory.Post("/", handler.MaterialCategory.Create)
-	materialCategory.Get("/", handler.MaterialCategory.FindAll)
-	materialCategory.Get("/:id", handler.MaterialCategory.FindByID)
+	material := app.Group("/material", jwtMiddleware)
+	material.Post("/", handler.Material.Create)
+	material.Get("/", handler.Material.FindAll)
+	material.Get("/:id", handler.Material.FindByID)
 }

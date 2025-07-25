@@ -8,12 +8,12 @@ import (
 )
 
 type Material struct {
-	ID                 uuid.UUID
-	MaterialCategoryID *uuid.UUID
-	Name               string
-	CreatedAt          time.Time
-	UpdatedAt          time.Time
-	DeletedAt          gorm.DeletedAt
+	ID         uuid.UUID
+	Name       string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  gorm.DeletedAt
+	Categories []Category `gorm:"many2many:material_categories;"`
 }
 
 func (u *Material) BeforeCreate(tx *gorm.DB) (err error) {
