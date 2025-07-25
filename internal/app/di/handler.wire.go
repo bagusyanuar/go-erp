@@ -10,6 +10,7 @@ type HandlerContainer struct {
 	Auth             *handler.AuthHandler
 	User             *handler.UserHandler
 	Unit             *handler.UnitHandler
+	Category         *handler.CategoryHandler
 	MaterialCategory *handler.MaterialCategoryHandler
 }
 
@@ -19,6 +20,7 @@ func InitHandler(cfg *config.AppConfig, serviceContainer *ServiceContainer) *Han
 		Auth:             handler.NewAuthHandler(serviceContainer.Auth, cfg),
 		User:             handler.NewUserHandler(serviceContainer.User, cfg),
 		Unit:             handler.NewUnitHandler(serviceContainer.Unit, cfg),
+		Category:         handler.NewCategoryHandler(serviceContainer.Category, cfg),
 		MaterialCategory: handler.NewMaterialCategoryHandler(serviceContainer.MaterialCategory, cfg),
 	}
 }

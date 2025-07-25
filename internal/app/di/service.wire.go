@@ -9,6 +9,7 @@ type ServiceContainer struct {
 	Auth             service.AuthService
 	User             service.UserService
 	Unit             service.UnitService
+	Category         service.CategoryService
 	MaterialCategory service.MaterialCategoryService
 }
 
@@ -17,6 +18,7 @@ func InitService(cfg *config.AppConfig, repositoryContainer *RepositoryContainer
 		Auth:             service.NewAuthService(repositoryContainer.Auth, cfg),
 		User:             service.NewUserService(repositoryContainer.User),
 		Unit:             service.NewUnitService(repositoryContainer.Unit),
+		Category:         service.NewCategoryService(repositoryContainer.Category),
 		MaterialCategory: service.NewMaterialCategoryService(repositoryContainer.MaterialCategory),
 	}
 }

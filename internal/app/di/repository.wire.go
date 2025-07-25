@@ -9,6 +9,7 @@ type RepositoryContainer struct {
 	Auth             repository.AuthRepository
 	User             repository.UserRepository
 	Unit             repository.UnitRepository
+	Category         repository.CategoryRepository
 	MaterialCategory repository.MaterialCategoryRepository
 }
 
@@ -17,6 +18,7 @@ func InitRepository(cfg *config.AppConfig) *RepositoryContainer {
 		Auth:             repository.NewAuthRepository(cfg.DB),
 		User:             repository.NewUserRepository(cfg.DB),
 		Unit:             repository.NewUnitRepository(cfg.DB),
+		Category:         repository.NewCategoryRepository(cfg.DB),
 		MaterialCategory: repository.NewMaterialCategoryRepository(cfg.DB),
 	}
 }
