@@ -3,14 +3,22 @@ package dto
 import "github.com/bagusyanuar/go-erp/internal/domain/entity"
 
 type MaterialDTO struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID         string        `json:"id"`
+	Name       string        `json:"name"`
+	Categories []CategoryDTO `json:"categories"`
 }
 
 func ToMaterial(entity *entity.Material) *MaterialDTO {
+	dataCategories := entity.Categories
+	categories := make([]CategoryDTO, 0)
+	for _, category := range dataCategories {
+		c := *ToCategory(&category)
+		categories = append(categories, c)
+	}
 	return &MaterialDTO{
-		ID:   entity.ID.String(),
-		Name: entity.Name,
+		ID:         entity.ID.String(),
+		Name:       entity.Name,
+		Categories: categories,
 	}
 }
 

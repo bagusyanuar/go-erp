@@ -2,12 +2,14 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/bagusyanuar/go-erp/internal/delivery/request"
 	"github.com/bagusyanuar/go-erp/internal/domain/dto"
 	"github.com/bagusyanuar/go-erp/internal/domain/entity"
 	"github.com/bagusyanuar/go-erp/internal/domain/repository"
 	"github.com/bagusyanuar/go-erp/pkg/lib/response"
+	"gorm.io/gorm"
 )
 
 type (
@@ -50,10 +52,38 @@ func (service *materialServiceImpl) Create(ctx context.Context, schema *request.
 
 // FindAll implements MaterialService.
 func (service *materialServiceImpl) FindAll(ctx context.Context, queryParams *request.MaterialQuery) response.ServiceResponse[*[]dto.MaterialDTO] {
-	panic("unimplemented")
+	repositoryResponse := service.MaterialRepository.FindAll(ctx, queryParams)
+	if repositoryResponse.Error != nil {
+		return response.ServiceInternalServerError(response.ServiceResponseOptions[*[]dto.MaterialDTO]{
+			Error:   repositoryResponse.Error,
+			Message: repositoryResponse.Message,
+		})
+	}
+	data := dto.ToMaterials(repositoryResponse.Data)
+	return response.ServiceOK(response.ServiceResponseOptions[*[]dto.MaterialDTO]{
+		Message: "successfully get materials",
+		Data:    &data,
+		Meta:    repositoryResponse.Meta,
+	})
 }
 
 // FindByID implements MaterialService.
 func (service *materialServiceImpl) FindByID(ctx context.Context, id string) response.ServiceResponse[*dto.MaterialDTO] {
-	panic("unimplemented")
+	repositoryResponse := service.MaterialRepository.FindByID(ctx, id)
+	if repositoryResponse.Error != nil {
+		if errors.Is(repositoryResponse.Error, gorm.ErrRecordNotFound) {
+			return response.ServiceNotFound(response.ServiceResponseOptions[*dto.MaterialDTO]{
+				Error:   repositoryResponse.Error,
+				Message: repositoryResponse.Message,
+			})
+		}
+		return response.ServiceInternalServerError(response.ServiceResponseOptions[*dto.MaterialDTO]{
+			Error:   repositoryResponse.Error,
+			Message: repositoryResponse.Message,
+		})
+	}
+	return response.ServiceOK(response.ServiceResponseOptions[*dto.MaterialDTO]{
+		Message: "successfully get material",
+		Data:    dto.ToMaterial(repositoryResponse.Data),
+	})
 }
