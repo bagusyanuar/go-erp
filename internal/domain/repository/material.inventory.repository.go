@@ -16,6 +16,7 @@ type (
 	MaterialInventoryRepository interface {
 		Create(ctx context.Context, materialInventory *entity.MaterialInventory) response.RepositoryResponse[any]
 		FindAll(ctx context.Context, queryParams *request.MaterialInventoryQuery) response.RepositoryResponse[[]entity.MaterialInventory]
+		FindByID(ctx context.Context, id string) response.RepositoryResponse[*entity.MaterialInventory]
 	}
 
 	materialInventoryRepositoryImpl struct {
@@ -63,6 +64,20 @@ func (repository *materialInventoryRepositoryImpl) FindAll(ctx context.Context, 
 	return response.MakeRepositorySuccess(data, meta)
 }
 
+// FindByID implements MaterialInventoryRepository.
+func (repository *materialInventoryRepositoryImpl) FindByID(ctx context.Context, id string) response.RepositoryResponse[*entity.MaterialInventory] {
+	var data *entity.MaterialInventory
+	tx := repository.DB.WithContext(ctx)
+	if err := tx.Where("id = ?", id).
+		Preload("Material").
+		Preload("Unit").
+		Preload("Modificator").
+		First(&data).Error; err != nil {
+		return response.MakeRepositoryError[*entity.MaterialInventory](err)
+	}
+	return response.MakeRepositorySuccess(data, nil)
+}
+
 func (repository *materialInventoryRepositoryImpl) defaultQuery(tx *gorm.DB, queryParams *request.MaterialInventoryQuery) *gorm.DB {
 	param := fmt.Sprintf("%%%s%%", queryParams.Param)
 	sortFieldMap := map[string]string{
@@ -75,6 +90,7 @@ func (repository *materialInventoryRepositoryImpl) defaultQuery(tx *gorm.DB, que
 	tx = tx.
 		Preload("Material").
 		Preload("Unit").
+		Preload("Modificator").
 		Joins("JOIN materials ON materials.id = material_inventories.material_id").
 		Scopes(
 			repository.filterByParam(param),

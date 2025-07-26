@@ -39,6 +39,13 @@ func (c *MaterialInventoryHandler) FindAll(ctx *fiber.Ctx) error {
 	return response.MakeAPIResponseFromService(ctx, res)
 }
 
+func (c *MaterialInventoryHandler) FindByID(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+
+	res := c.MaterialInventoryService.FindByID(ctx.UserContext(), id)
+	return response.MakeAPIResponseFromService(ctx, res)
+}
+
 func (c *MaterialInventoryHandler) Create(ctx *fiber.Ctx) error {
 	request := new(request.MaterialInventorySchema)
 	if err := ctx.BodyParser(request); err != nil {

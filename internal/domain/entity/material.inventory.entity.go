@@ -9,16 +9,17 @@ import (
 )
 
 type MaterialInventory struct {
-	ID         uuid.UUID
-	MaterialID *uuid.UUID
-	UnitID     *uuid.UUID
-	Quantity   decimal.Decimal `gorm:"type:numeric(15,2);default:0"`
-	ModifiedBy *uuid.UUID
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
-	DeletedAt  gorm.DeletedAt
-	Material   *Material `gorm:"foreignKey:MaterialID"`
-	Unit       *Unit     `gorm:"foreignKey:UnitID"`
+	ID          uuid.UUID
+	MaterialID  *uuid.UUID
+	UnitID      *uuid.UUID
+	Quantity    decimal.Decimal `gorm:"type:numeric(15,2);default:0"`
+	ModifiedBy  *uuid.UUID
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   gorm.DeletedAt
+	Material    *Material `gorm:"foreignKey:MaterialID"`
+	Unit        *Unit     `gorm:"foreignKey:UnitID"`
+	Modificator *User     `gorm:"foreignKey:ModifiedBy"`
 }
 
 func (u *MaterialInventory) BeforeCreate(tx *gorm.DB) (err error) {

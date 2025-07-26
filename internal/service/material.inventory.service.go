@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/bagusyanuar/go-erp/internal/delivery/request"
 	"github.com/bagusyanuar/go-erp/internal/domain/dto"
@@ -11,12 +12,14 @@ import (
 	"github.com/bagusyanuar/go-erp/pkg/lib"
 	"github.com/bagusyanuar/go-erp/pkg/lib/response"
 	"github.com/shopspring/decimal"
+	"gorm.io/gorm"
 )
 
 type (
 	MaterialInventoryService interface {
 		Create(ctx context.Context, schema *request.MaterialInventorySchema) response.ServiceResponse[any]
 		FindAll(ctx context.Context, queryParams *request.MaterialInventoryQuery) response.ServiceResponse[*[]dto.MaterialInventoryDTO]
+		FindByID(ctx context.Context, id string) response.ServiceResponse[*dto.MaterialInventoryDTO]
 	}
 
 	materialInventoryServiceImpl struct {
@@ -74,5 +77,26 @@ func (service *materialInventoryServiceImpl) FindAll(ctx context.Context, queryP
 		Message: "successfully get material inventories",
 		Data:    &data,
 		Meta:    repositoryResponse.Meta,
+	})
+}
+
+// FindByID implements MaterialInventoryService.
+func (service *materialInventoryServiceImpl) FindByID(ctx context.Context, id string) response.ServiceResponse[*dto.MaterialInventoryDTO] {
+	repositoryResponse := service.MaterialInventoryRepository.FindByID(ctx, id)
+	if repositoryResponse.Error != nil {
+		if errors.Is(repositoryResponse.Error, gorm.ErrRecordNotFound) {
+			return response.ServiceNotFound(response.ServiceResponseOptions[*dto.MaterialInventoryDTO]{
+				Error:   repositoryResponse.Error,
+				Message: repositoryResponse.Message,
+			})
+		}
+		return response.ServiceInternalServerError(response.ServiceResponseOptions[*dto.MaterialInventoryDTO]{
+			Error:   repositoryResponse.Error,
+			Message: repositoryResponse.Message,
+		})
+	}
+	return response.ServiceOK(response.ServiceResponseOptions[*dto.MaterialInventoryDTO]{
+		Message: "successfully get material inventory",
+		Data:    dto.ToMaterialInventory(repositoryResponse.Data),
 	})
 }

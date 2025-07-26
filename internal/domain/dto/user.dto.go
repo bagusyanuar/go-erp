@@ -3,14 +3,16 @@ package dto
 import "github.com/bagusyanuar/go-erp/internal/domain/entity"
 
 type UserDTO struct {
-	ID    string `json:"id"`
-	Email string `json:"email"`
+	ID       string `json:"id"`
+	Email    string `json:"email"`
+	Username string `json:"username"`
 }
 
 func ToUser(entity *entity.User) *UserDTO {
 	return &UserDTO{
-		ID:    entity.ID.String(),
-		Email: entity.Email,
+		ID:       entity.ID.String(),
+		Email:    entity.Email,
+		Username: entity.Username,
 	}
 }
 
