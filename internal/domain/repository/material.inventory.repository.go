@@ -78,7 +78,7 @@ func (repository *materialInventoryRepositoryImpl) defaultQuery(tx *gorm.DB, que
 		Joins("JOIN materials ON materials.id = material_inventories.material_id").
 		Scopes(
 			repository.filterByParam(param),
-			repository.sortBy(sort, order),
+			pagination.SortScope(sort, order),
 		).
 		Group("material_inventories.id, materials.name")
 
