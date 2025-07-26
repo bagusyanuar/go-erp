@@ -13,6 +13,7 @@ CREATE TABLE material_inventory_adjustments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     material_id UUID,                                    -- Foreign key untuk material, nullable
     unit_id UUID,
+    date DATE NOT NULL,
     type adjustment_type NOT NULL,
     quantity NUMERIC(15, 2) DEFAULT 0,
     author_id UUID,
