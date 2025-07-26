@@ -95,10 +95,3 @@ func (repository *materialInventoryRepositoryImpl) filterByParam(param string) f
 			Where("materials.deleted_at IS NULL")
 	}
 }
-
-func (repository *materialInventoryRepositoryImpl) sortBy(sortKey, sortValue string) func(*gorm.DB) *gorm.DB {
-	return func(tx *gorm.DB) *gorm.DB {
-		sort := fmt.Sprintf("%s %s", sortKey, sortValue)
-		return tx.Order(sort)
-	}
-}
