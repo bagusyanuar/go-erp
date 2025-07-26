@@ -12,6 +12,7 @@ import (
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 func VerifyJWT(cfg *config.AppConfig) fiber.Handler {
@@ -40,11 +41,19 @@ func VerifyJWT(cfg *config.AppConfig) fiber.Handler {
 		SuccessHandler: func(c *fiber.Ctx) error {
 			token := c.Locals("user").(*jwt.Token) // casting ke *jwt.Token
 			claims := token.Claims.(jwt.MapClaims) // baru ambil claim-nya
-			userID, ok := claims["sub"].(string)
-			if !ok {
+			sub, ok := claims["sub"].(string)
+			if !ok || sub == "" {
 				return c.Status(fiber.StatusUnauthorized).JSON(response.APIResponse[any]{
 					Code:    fiber.StatusUnauthorized,
 					Message: "Invalid token subject",
+				})
+			}
+
+			userID, err := uuid.Parse(sub)
+			if err != nil {
+				return c.Status(fiber.StatusUnauthorized).JSON(response.APIResponse[any]{
+					Code:    fiber.StatusUnauthorized,
+					Message: "Invalid subject format",
 				})
 			}
 

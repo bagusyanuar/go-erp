@@ -2,8 +2,11 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/bagusyanuar/go-erp/internal/delivery/request"
 	"github.com/bagusyanuar/go-erp/internal/domain/entity"
+	"github.com/bagusyanuar/go-erp/pkg/lib/pagination"
 	"github.com/bagusyanuar/go-erp/pkg/lib/response"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -12,6 +15,7 @@ import (
 type (
 	MaterialInventoryRepository interface {
 		Create(ctx context.Context, materialInventory *entity.MaterialInventory) response.RepositoryResponse[any]
+		FindAll(ctx context.Context, queryParams *request.MaterialInventoryQuery) response.RepositoryResponse[[]entity.MaterialInventory]
 	}
 
 	materialInventoryRepositoryImpl struct {
@@ -34,4 +38,34 @@ func (repository *materialInventoryRepositoryImpl) Create(ctx context.Context, m
 		return response.MakeRepositoryError[any](err)
 	}
 	return response.MakeRepositorySuccess[any](nil, nil)
+}
+
+// FindAll implements MaterialInventoryRepository.
+func (repository *materialInventoryRepositoryImpl) FindAll(ctx context.Context, queryParams *request.MaterialInventoryQuery) response.RepositoryResponse[[]entity.MaterialInventory] {
+	tx := repository.DB.WithContext(ctx)
+	defaultQuery := repository.defaultQuery(tx, queryParams)
+
+	var totalRows int64
+	if err := defaultQuery.Model(&entity.MaterialInventory{}).
+		Count(&totalRows).Error; err != nil {
+		return response.MakeRepositoryError[[]entity.MaterialInventory](err)
+	}
+
+	var data []entity.MaterialInventory
+	if err := defaultQuery.
+		Scopes(pagination.Paginate(tx, queryParams.Page, queryParams.PageSize)).
+		Find(&data).Error; err != nil {
+		return response.MakeRepositoryError[[]entity.MaterialInventory](err)
+	}
+
+	meta := pagination.MakeMetaPagination(queryParams.Page, queryParams.PageSize, totalRows)
+
+	return response.MakeRepositorySuccess(data, meta)
+}
+
+func (repository *materialInventoryRepositoryImpl) defaultQuery(tx *gorm.DB, queryParams *request.MaterialInventoryQuery) *gorm.DB {
+	param := fmt.Sprintf("%%%s%%", queryParams.Param)
+	tx = tx.Where("name ILIKE ?", param)
+
+	return tx
 }

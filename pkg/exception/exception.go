@@ -7,6 +7,7 @@ var (
 	ErrUnauthorized        = errors.New("unauthorized")
 	ErrInvalidBearer       = errors.New("invalid bearer type")
 	ErrMissingOrMalformed  = errors.New("token is missing or malformed")
+	ErrInvalidUserFormat   = errors.New("invalid user format")
 	ErrInvalidJWTParse     = errors.New("invalid jwt parse")
 	ErrUserNotFound        = errors.New("user not found")
 	ErrRecordNotFound      = errors.New("record not found")
