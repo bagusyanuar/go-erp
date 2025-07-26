@@ -5,6 +5,11 @@ type QueryPagination struct {
 	PageSize int ` json:"page_size" query:"page_size" validate:"required"`
 }
 
+type QuerySort struct {
+	Sort  string `json:"sort" query:"sort"`
+	Order string ` json:"order" query:"order"`
+}
+
 type QueryParams[T any] struct {
 	Query T
 }

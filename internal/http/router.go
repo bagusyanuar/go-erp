@@ -35,4 +35,5 @@ func NewRouter(cfg *config.AppConfig, handler *di.HandlerContainer) {
 
 	materialInventory := app.Group("/material-inventory", jwtMiddleware)
 	materialInventory.Post("/", handler.MaterialInventory.Create)
+	materialInventory.Get("/", handler.MaterialInventory.FindAll)
 }

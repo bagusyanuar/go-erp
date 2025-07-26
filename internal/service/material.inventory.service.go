@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/bagusyanuar/go-erp/internal/delivery/request"
+	"github.com/bagusyanuar/go-erp/internal/domain/dto"
 	"github.com/bagusyanuar/go-erp/internal/domain/entity"
 	"github.com/bagusyanuar/go-erp/internal/domain/repository"
 	"github.com/bagusyanuar/go-erp/pkg/exception"
@@ -15,6 +16,7 @@ import (
 type (
 	MaterialInventoryService interface {
 		Create(ctx context.Context, schema *request.MaterialInventorySchema) response.ServiceResponse[any]
+		FindAll(ctx context.Context, queryParams *request.MaterialInventoryQuery) response.ServiceResponse[*[]dto.MaterialInventoryDTO]
 	}
 
 	materialInventoryServiceImpl struct {
@@ -55,5 +57,22 @@ func (service *materialInventoryServiceImpl) Create(ctx context.Context, schema 
 	}
 	return response.ServiceCreated(response.ServiceResponseOptions[any]{
 		Message: "successfully create material inventory",
+	})
+}
+
+// FindAll implements MaterialInventoryService.
+func (service *materialInventoryServiceImpl) FindAll(ctx context.Context, queryParams *request.MaterialInventoryQuery) response.ServiceResponse[*[]dto.MaterialInventoryDTO] {
+	repositoryResponse := service.MaterialInventoryRepository.FindAll(ctx, queryParams)
+	if repositoryResponse.Error != nil {
+		return response.ServiceInternalServerError(response.ServiceResponseOptions[*[]dto.MaterialInventoryDTO]{
+			Error:   repositoryResponse.Error,
+			Message: repositoryResponse.Message,
+		})
+	}
+	data := dto.ToMaterialInventories(repositoryResponse.Data)
+	return response.ServiceOK(response.ServiceResponseOptions[*[]dto.MaterialInventoryDTO]{
+		Message: "successfully get material inventories",
+		Data:    &data,
+		Meta:    repositoryResponse.Meta,
 	})
 }

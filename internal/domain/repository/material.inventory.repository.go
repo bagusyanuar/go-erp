@@ -65,7 +65,40 @@ func (repository *materialInventoryRepositoryImpl) FindAll(ctx context.Context, 
 
 func (repository *materialInventoryRepositoryImpl) defaultQuery(tx *gorm.DB, queryParams *request.MaterialInventoryQuery) *gorm.DB {
 	param := fmt.Sprintf("%%%s%%", queryParams.Param)
-	tx = tx.Where("name ILIKE ?", param)
+	sortFieldMap := map[string]string{
+		"name":     "materials.name",
+		"quantity": "quantity",
+	}
+	sort := pagination.GetSortField(queryParams.Sort, "materials.name", sortFieldMap)
+	order := pagination.GetOrder(queryParams.Order)
+
+	tx = tx.
+		Preload("Material").
+		Preload("Unit").
+		Joins("JOIN materials ON materials.id = material_inventories.material_id").
+		Scopes(
+			repository.filterByParam(param),
+			repository.sortBy(sort, order),
+		).
+		Group("material_inventories.id, materials.name")
 
 	return tx
+}
+
+func (repository *materialInventoryRepositoryImpl) filterByParam(param string) func(*gorm.DB) *gorm.DB {
+	return func(tx *gorm.DB) *gorm.DB {
+		if param == "" {
+			return tx
+		}
+		return tx.
+			Where("materials.name ILIKE ?", param).
+			Where("materials.deleted_at IS NULL")
+	}
+}
+
+func (repository *materialInventoryRepositoryImpl) sortBy(sortKey, sortValue string) func(*gorm.DB) *gorm.DB {
+	return func(tx *gorm.DB) *gorm.DB {
+		sort := fmt.Sprintf("%s %s", sortKey, sortValue)
+		return tx.Order(sort)
+	}
 }

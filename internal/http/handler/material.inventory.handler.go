@@ -22,11 +22,24 @@ func NewMaterialInventoryHandler(materialInventoryService service.MaterialInvent
 	}
 }
 
-func (c *MaterialInventoryHandler) Create(ctx *fiber.Ctx) error {
-	// token := ctx.Locals("user").(*jwt.Token) // casting ke *jwt.Token
-	// claims := token.Claims.(jwt.MapClaims)   // baru ambil claim-nya
-	// userID := claims["sub"].(string)
+func (c *MaterialInventoryHandler) FindAll(ctx *fiber.Ctx) error {
+	queryParams := new(request.MaterialInventoryQuery)
+	if err := ctx.QueryParser(queryParams); err != nil {
+		return response.MakeResponseBadRequest(ctx, response.APIResponseOptions[any]{
+			Message: exception.ErrBadRequest.Error(),
+		})
+	}
 
+	messages, err := lib.Validate(c.Config.Validator, queryParams)
+	if err != nil {
+		return response.MakeAPIResponseErrorValidation(ctx, messages)
+	}
+
+	res := c.MaterialInventoryService.FindAll(ctx.UserContext(), queryParams)
+	return response.MakeAPIResponseFromService(ctx, res)
+}
+
+func (c *MaterialInventoryHandler) Create(ctx *fiber.Ctx) error {
 	request := new(request.MaterialInventorySchema)
 	if err := ctx.BodyParser(request); err != nil {
 		return response.MakeResponseBadRequest(ctx, response.APIResponseOptions[any]{

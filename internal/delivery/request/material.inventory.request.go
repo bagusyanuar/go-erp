@@ -10,4 +10,5 @@ type MaterialInventorySchema struct {
 type MaterialInventoryQuery struct {
 	Param string `json:"param" query:"param"`
 	QueryPagination
+	QuerySort
 }

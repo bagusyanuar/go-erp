@@ -2,24 +2,36 @@ package dto
 
 import (
 	"github.com/bagusyanuar/go-erp/internal/domain/entity"
-	"github.com/shopspring/decimal"
 )
 
 type MaterialInventoryDTO struct {
-	ID       string          `json:"id"`
-	Material *MaterialDTO    `json:"material"`
-	Unit     *UnitDTO        `json:"unit"`
-	Quantity decimal.Decimal `json:"quantity"`
+	ID       string           `json:"id"`
+	Material *BaseMaterialDTO `json:"material"`
+	Unit     *UnitDTO         `json:"unit"`
+	Quantity float64          `json:"quantity"`
 }
 
-func ToMaterialInventory(entity *entity.MaterialInventory) *MaterialInventoryDTO {
-	material := ToMaterial(entity.Material)
-	unit := ToUnit(entity.Unit)
+func ToMaterialInventory(e *entity.MaterialInventory) *MaterialInventoryDTO {
+	var material *BaseMaterialDTO
+	var unit *UnitDTO
+	if e.Material != nil {
+		material = &BaseMaterialDTO{
+			ID:   e.Material.ID.String(),
+			Name: e.Material.Name,
+		}
+	}
+
+	if e.Unit != nil {
+		unit = &UnitDTO{
+			ID:   e.Unit.ID.String(),
+			Name: e.Unit.Name,
+		}
+	}
 	return &MaterialInventoryDTO{
-		ID:       entity.ID.String(),
+		ID:       e.ID.String(),
 		Material: material,
 		Unit:     unit,
-		Quantity: entity.Quantity,
+		Quantity: e.Quantity.Round(2).InexactFloat64(),
 	}
 }
 

@@ -7,10 +7,10 @@ type UnitDTO struct {
 	Name string `json:"name"`
 }
 
-func ToUnit(entity *entity.Unit) *UnitDTO {
+func ToUnit(e *entity.Unit) *UnitDTO {
 	return &UnitDTO{
-		ID:   entity.ID.String(),
-		Name: entity.Name,
+		ID:   e.ID.String(),
+		Name: e.Name,
 	}
 }
 

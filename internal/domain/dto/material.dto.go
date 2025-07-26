@@ -2,6 +2,11 @@ package dto
 
 import "github.com/bagusyanuar/go-erp/internal/domain/entity"
 
+type BaseMaterialDTO struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 type MaterialDTO struct {
 	ID         string        `json:"id"`
 	Name       string        `json:"name"`
