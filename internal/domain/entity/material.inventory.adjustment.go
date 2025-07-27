@@ -34,5 +34,5 @@ func (u *MaterialInventoryAdjustment) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 func (u *MaterialInventoryAdjustment) TableName() string {
-	return "material_inventories"
+	return "material_inventory_adjustments"
 }

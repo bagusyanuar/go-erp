@@ -1,16 +1,39 @@
 package dto
 
 import (
+	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/bagusyanuar/go-erp/internal/domain/entity"
 )
 
+type DateOnly time.Time
+
+func (d DateOnly) MarshalJSON() ([]byte, error) {
+	formatted := time.Time(d).Format("2006-01-02")
+	return json.Marshal(formatted)
+}
+
+func (d *DateOnly) UnmarshalJSON(b []byte) error {
+	s := strings.Trim(string(b), `"`)
+	t, err := time.Parse("2006-01-02", s)
+	if err != nil {
+		return err
+	}
+	*d = DateOnly(t)
+	return nil
+}
+
+func (d DateOnly) ToTime() time.Time {
+	return time.Time(d)
+}
+
 type MaterialInventoryAdjustmentDTO struct {
 	ID        string           `json:"id"`
 	Material  *BaseMaterialDTO `json:"material"`
 	Unit      *UnitDTO         `json:"unit"`
-	Date      time.Time        `json:"date"`
+	Date      DateOnly         `json:"date"`
 	Quantity  float64          `json:"quantity"`
 	Author    *UserDTO         `json:"author"`
 	CreatedAt time.Time        `json:"created_at"`
@@ -47,6 +70,7 @@ func ToMaterialInventoryAdjustment(e *entity.MaterialInventoryAdjustment) *Mater
 		Material:  material,
 		Unit:      unit,
 		Quantity:  e.Quantity.Round(2).InexactFloat64(),
+		Date:      DateOnly(e.Date),
 		Author:    author,
 		CreatedAt: e.CreatedAt,
 		UpdatedAt: e.UpdatedAt,

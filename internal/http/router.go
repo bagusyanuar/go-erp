@@ -37,4 +37,8 @@ func NewRouter(cfg *config.AppConfig, handler *di.HandlerContainer) {
 	materialInventory.Post("/", handler.MaterialInventory.Create)
 	materialInventory.Get("/", handler.MaterialInventory.FindAll)
 	materialInventory.Get("/:id", handler.MaterialInventory.FindByID)
+
+	materialInventoryAdjustment := app.Group("/material-inventory-adjustment", jwtMiddleware)
+	materialInventoryAdjustment.Post("/", handler.MaterialInventoryAdjustment.Create)
+	materialInventoryAdjustment.Get("/", handler.MaterialInventoryAdjustment.FindAll)
 }
